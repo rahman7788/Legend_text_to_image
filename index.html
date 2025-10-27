@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TEXT TO VIDEO - LEGEND EXPERT</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;700&display=swap');
+    :root{
+      --bg1:#050505; --bg2:#0b0010;
+      --red:#ff004c; --cyan:#00f0ff; --mag:#ff00d0;
+      --shock-c:#8ff; --shock-r:#ff7aa3;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:'Poppins',sans-serif;
+      background: radial-gradient(circle at 20% 10%, rgba(0,0,0,0.6), transparent 30%),
+                  linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 60%);
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      min-height:100vh;
+      overflow:hidden;
+      padding-bottom:80px;
+    }
+    .bg-noise{position:fixed; inset:0; z-index:0;
+      background: radial-gradient(circle at 70% 30%, rgba(0,240,255,0.03), transparent 5%),
+                  radial-gradient(circle at 30% 80%, rgba(255,0,76,0.02), transparent 6%);
+      pointer-events:none; animation: floatBG 12s ease-in-out infinite;}
+    @keyframes floatBG{0%{transform:translateY(0)}50%{transform:translateY(-30px)}100%{transform:translateY(0)}}
+
+    .skull-wrap{position:relative;z-index:2;margin-top:26px;display:flex;align-items:center;flex-direction:column;gap:10px;pointer-events:none}
+    .skull{width:170px;height:170px;filter: drop-shadow(0 0 18px rgba(0,240,255,0.18)) drop-shadow(0 0 30px rgba(255,0,76,0.08));mix-blend-mode:screen}
+    .skull-glow{position:absolute;width:240px;height:240px;border-radius:50%;top:-30px;left:50%;transform:translateX(-50%);background: radial-gradient(circle, rgba(0,240,255,0.07), transparent 30%), radial-gradient(circle, rgba(255,0,76,0.03), transparent 40%);z-index:-1;animation: ringPulse 3.2s ease-in-out infinite;filter: blur(18px)}
+    @keyframes ringPulse{0%{transform:translateX(-50%) scale(.96)}50%{transform:translateX(-50%) scale(1.06)}100%{transform:translateX(-50%) scale(.96)}}
+
+    .legend-title{font-family:'Orbitron',sans-serif;font-size:20px;letter-spacing:2px;color:var(--cyan);
+      text-shadow:0 0 14px rgba(0,240,255,0.9),0 0 30px rgba(255,0,76,0.25);animation: legendPulse 2.8s infinite;pointer-events:none}
+    @keyframes legendPulse{0%{transform:scale(1)}50%{transform:scale(1.07)}100%{transform:scale(1)}}
+
+    h1{margin-top:14px;font-family:'Orbitron',sans-serif;font-size:30px;text-transform:uppercase;color:var(--red);letter-spacing:4px;text-shadow:0 0 18px rgba(255,0,76,0.9)}
+    .sub{margin-top:6px;font-size:14px;color:var(--cyan);text-shadow:0 0 12px rgba(0,240,255,0.6)}
+
+    .card{position:relative;z-index:2;margin-top:26px;width:92%;max-width:760px;padding:24px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+    .input-row{width:100%;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+    input[type="text"]{flex:1 1 420px;min-width:220px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.45));color:#fff;font-size:15px;outline:none;transition:box-shadow .2s, transform .12s}
+    input[type="text"]:focus{box-shadow:0 0 28px rgba(0,240,255,0.12);transform:translateY(-2px)}
+
+    button.generate{padding:12px 20px;font-weight:700;font-size:15px;border-radius:10px;border:none;cursor:pointer;color:#081017;background:linear-gradient(90deg,var(--red),var(--mag));box-shadow:0 6px 28px rgba(255,0,76,0.14);display:inline-flex;align-items:center;gap:10px;position:relative;overflow:visible;transition:transform .12s,box-shadow .12s}
+    button.generate:active{transform:scale(.98)} button.generate:hover{transform:scale(1.04);box-shadow:0 10px 40px rgba(255,0,76,0.24)}
+
+    /* SHOCK EFFECT - will be toggled with .shock class */
+    button.generate .shock-ring{position:absolute;inset:-8px;border-radius:12px;pointer-events:none;opacity:0;transition:opacity .08s}
+    button.generate .shock-ring::before, button.generate .shock-ring::after{
+      content:"";position:absolute;inset:0;border-radius:12px;mix-blend-mode:screen;filter:blur(10px)
+    }
+    button.generate .shock-ring::before{background:linear-gradient(90deg, rgba(0,240,255,0.7), rgba(255,0,76,0.45))}
+    button.generate .shock-ring::after{background:conic-gradient(from 180deg at 50% 50%, rgba(0,240,255,0.2), rgba(255,0,76,0.2), rgba(0,240,255,0.15))}
+    button.generate.shock .shock-ring{opacity:1;animation:shockPulse .45s ease-in-out 1}
+    @keyframes shockPulse{
+      0%{transform:scale(.8) rotate(-3deg); opacity:1; filter:blur(6px)}
+      50%{transform:scale(1.12) rotate(3deg); opacity:1; filter:blur(12px)}
+      100%{transform:scale(1) rotate(0deg); opacity:0; filter:blur(18px)}
+    }
+
+    /* small lightning streaks (animated lines) */
+    .bolt { position:absolute; width:2px; height:40px; background:linear-gradient(180deg, rgba(0,240,255,1), rgba(255,0,76,0.9)); left:12px; top:-36px; opacity:0; transform:translateY(6px) rotate(-8deg); filter:blur(1px) }
+    .bolt2 { left:auto; right:14px; transform:translateY(2px) rotate(10deg) }
+    .generate.shock .bolt, .generate.shock .bolt2 { animation: boltFlash .35s linear 1 }
+    @keyframes boltFlash {
+      0%{opacity:1; transform:translateY(-6px) scaleY(.9)}
+      60%{opacity:1; transform:translateY(4px) scaleY(1.05)}
+      100%{opacity:0; transform:translateY(12px)}
+    }
+
+    .hint{margin-top:8px;font-size:13px;color:rgba(255,255,255,0.75);text-align:center}
+
+    .output{margin-top:14px;width:100%;display:flex;justify-content:center;align-items:center;min-height:56px}
+    .loading{display:flex;align-items:center;gap:12px;color:var(--cyan);text-shadow:0 0 14px rgba(0,240,255,0.8);font-weight:600}
+    .spinner{width:36px;height:36px;border-radius:50%;border:3px solid rgba(255,255,255,0.06);border-top:3px solid var(--cyan);animation:spin 1s linear infinite}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+    video{width:100%;border-radius:10px;box-shadow:0 10px 60px rgba(0,0,0,0.6)}
+
+    footer{position:fixed;bottom:12px;z-index:2;left:50%;transform:translateX(-50%);font-weight:700;color:var(--mag);text-shadow:0 0 18px rgba(255,0,208,0.6)}
+
+    @media (max-width:520px){h1{font-size:22px}.skull{width:140px;height:140px}.skull-glow{width:200px;height:200px;top:-20px}}
+  </style>
+</head>
+<body>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <div class="skull-wrap" aria-hidden="true">
+    <div class="skull-glow"></div>
+    <!-- Inline neon skull -->
+    <svg class="skull" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <filter id="neon"><feGaussianBlur stdDeviation="4" result="blur" /><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <radialGradient id="eyeGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00f0ff" stop-opacity="1"/><stop offset="60%" stop-color="#00f0ff" stop-opacity="0.55"/><stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g transform="translate(10,8)">
+        <path d="M130 10 C 190 10, 250 60, 240 125 C 230 200, 150 238, 130 238 C 110 238, 30 200, 20 125 C 10 60, 70 10, 130 10 Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,0,76,0.9)" stroke-width="3" filter="url(#neon)"></path>
+        <path d="M120 38 L140 62 L132 74" stroke="rgba(255,0,76,0.55)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        <ellipse id="eyeLeftOuter" cx="95" cy="110" rx="30" ry="26" fill="rgba(0,0,0,0.95)" stroke="rgba(255,0,76,0.6)" stroke-width="2.4" filter="url(#neon)"/>
+        <ellipse id="eyeRightOuter" cx="165" cy="110" rx="30" ry="26" fill="rgba(0,0,0,0.95)" stroke="rgba(255,0,76,0.6)" stroke-width="2.4" filter="url(#neon)"/>
+        <ellipse id="eyeLeft" cx="95" cy="110" rx="14" ry="12" fill="url(#eyeGrad)" class="eye-glow"/>
+        <ellipse id="eyeRight" cx="165" cy="110" rx="14" ry="12" fill="url(#eyeGrad)" class="eye-glow"/>
+        <path d="M130 140 L120 160 L140 160 Z" fill="rgba(255,0,76,0.12)" stroke="rgba(255,0,76,0.3)" />
+        <path id="jaw" d="M90 178 C 110 200, 150 200, 190 178 L190 170 C150 200,110 200,90 170 Z" fill="rgba(255,255,255,0.02)" stroke="rgba(0,240,255,0.12)" stroke-width="1.2" class="jaw-flick"/>
+      </g>
+    </svg>
+    <div class="legend-title">⚡ LEGEND EXPERT ⚡</div>
+  </div>
+
+  <h1>TEXT TO VIDEO — FREE UNLIMITED</h1>
+  <div class="sub">CREATED BY LEGEND EXPERT</div>
+
+  <div class="card" role="main" aria-live="polite">
+    <div class="input-row">
+      <input id="prompt" type="text" placeholder="Type your video idea... (eg: cinematic storm, neon city aerial)" autocomplete="off" />
+      <button class="generate" id="generateBtn" aria-label="Generate video">
+        <span class="bolt" aria-hidden="true"></span>
+        <span class="bolt2" aria-hidden="true"></span>
+        <span>Generate</span>
+        <span class="shock-ring" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="hint">Unlimited use • Clear prompts = better output</div>
+    <div class="output" id="output" aria-atomic="true"></div>
+  </div>
+
+  <footer>⚡ POWERED BY LEGEND EXPERT ⚡</footer>
+
+  <!-- sounds -->
+  <audio id="zap" src="https://actions.google.com/sounds/v1/impacts/electric_zap.ogg" preload="auto"></audio>
+  <audio id="whisper" src="https://actions.google.com/sounds/v1/ambiences/sonic_wind.ogg" preload="auto"></audio>
+
+  <script>
+    const leftEye = document.getElementById('eyeLeft');
+    const rightEye = document.getElementById('eyeRight');
+    const jaw = document.getElementById('jaw');
+    const zap = document.getElementById('zap');
+    const whisper = document.getElementById('whisper');
+    const legend = document.querySelector('.legend-title');
+    const genBtn = document.getElementById('generateBtn');
+    const promptInput = document.getElementById('prompt');
+    const out = document.getElementById('output');
+    let ambientStarted = false;
+
+    function tryStartAmbient(){
+      if(!ambientStarted){
+        ambientStarted = true;
+        whisper.volume = 0.06;
+        whisper.loop = true;
+        whisper.play().catch(()=>{});
+      }
+    }
+    window.addEventListener('pointerdown', tryStartAmbient, { once: true });
+
+    function skullLoop(){
+      const t = Math.random();
+      if(t < 0.24){
+        leftEye.style.opacity='0.08'; rightEye.style.opacity='0.08';
+        jaw.style.transform='translateY(2px) scaleY(0.99)';
+        setTimeout(()=>{ leftEye.style.opacity='1'; rightEye.style.opacity='1'; jaw.style.transform=''; }, 140 + Math.random()*220);
+      } else if(t < 0.6){
+        leftEye.style.opacity='0.9'; rightEye.style.opacity='0.9';
+        setTimeout(()=>{ leftEye.style.opacity='1'; rightEye.style.opacity='1'; }, 350);
+      }
+      if(Math.random() < 0.08){
+        legend.style.transform='scale(1.14)'; legend.style.textShadow='0 0 28px rgba(0,240,255,0.95), 0 0 48px rgba(255,0,76,0.35)';
+        setTimeout(()=>{ legend.style.transform=''; legend.style.textShadow=''; }, 220);
+      }
+      setTimeout(skullLoop, 700 + Math.random()*1200);
+    }
+    skullLoop();
+
+    genBtn.addEventListener('click', generateVideo);
+    promptInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') generateVideo(); });
+
+    async function generateVideo(){
+      const prompt = promptInput.value.trim();
+      if(!prompt){
+        out.innerHTML = `<div class="loading">⚠️ Write a prompt first!</div>`;
+        return;
+      }
+
+      // start ambient if not already
+      tryStartAmbient();
+
+      // do shock animation on button
+      genBtn.classList.add('shock');
+      // small extra bolts visible
+      setTimeout(()=>{ genBtn.classList.remove('shock'); }, 600);
+
+      // zap sound
+      try{ zap.currentTime = 0; zap.volume = 1.0; zap.play().catch(()=>{}); }catch(e){}
+
+      // show loading spinner
+      out.innerHTML = `<div class="loading"><div class="spinner" aria-hidden="true"></div><div>⚡ Generating AI video... please wait ⚡</div></div>`;
+
+      // tiny legend flash
+      legend.style.transform = 'scale(1.06)'; setTimeout(()=>{ legend.style.transform=''; }, 260);
+
+      try {
+        // actual API call (as you provided)
+        const resp = await fetch(`https://shadowscriptz.xyz/AiPremiumapis/vediogenapi.php?prompt=${encodeURIComponent(prompt)}`, { method:'GET', mode:'cors' });
+        const txt = await resp.text();
+
+        // try find first http(s) link in response
+        const urlMatch = txt.match(/https?:\/\/[^\s'"]+/i);
+        if(urlMatch){
+          const videoUrl = urlMatch[0];
+          // create video element with autoplay + muted to ensure play on most browsers
+          out.innerHTML = `<video id="resultVideo" controls autoplay muted playsinline src="${videoUrl}"></video>`;
+          // try unmuting after short user gesture — keep muted to ensure auto-play; user can unmute manually
+          const v = document.getElementById('resultVideo');
+          // if browser allows, set volume and unmute after small delay (best-effort)
+          setTimeout(()=>{ try{ v.muted = false; v.volume = 0.9; }catch(e){} }, 800);
+        } else {
+          // maybe JSON or message; show nicely
+          let msg = txt;
+          try { const j = JSON.parse(txt); msg = j.message || j.url || JSON.stringify(j); } catch(e){}
+          out.innerHTML = `<div class="loading">⚠️ No playable video URL returned. Response: <br><small style="opacity:.9">${escapeHtml(msg)}</small></div>`;
+        }
+      } catch (err){
+        console.error(err);
+        out.innerHTML = `<div class="loading">❌ API error or network issue. Try again.</div>`;
+      }
+    }
+
+    function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+  </script>
+</body>
+</html>
